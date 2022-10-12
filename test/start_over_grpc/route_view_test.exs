@@ -25,8 +25,8 @@ defmodule StartOverGRPC.RouteViewTest do
           %{app_eui: valid_app_eui_integer(), dev_eui: valid_dev_eui_integer()}
         ],
         devaddr_ranges: [
-          %{start_addr: 0x0001, end_addr: 0x001F},
-          %{start_addr: 0x0030, end_addr: 0x003F}
+          %{start_addr: 0x0001_0000, end_addr: 0x001F_0000},
+          %{start_addr: 0x0030_0000, end_addr: 0xFFFF_FFFF}
         ]
       }
 
@@ -79,8 +79,8 @@ defmodule StartOverGRPC.RouteViewTest do
           %{app_eui: valid_app_eui_integer(), dev_eui: valid_dev_eui_integer()}
         ],
         devaddr_ranges: [
-          %{start_addr: 0x0001, end_addr: 0x001F},
-          %{start_addr: 0x0030, end_addr: 0x003F}
+          %{start_addr: 0x0001_0000, end_addr: 0x001F_0000},
+          %{start_addr: 0x0030_0000, end_addr: 0xFFFF_FFFF}
         ]
       }
 
@@ -114,8 +114,8 @@ defmodule StartOverGRPC.RouteViewTest do
           %{app_eui: valid_app_eui_integer(), dev_eui: valid_dev_eui_integer()}
         ],
         devaddr_ranges: [
-          %{start_addr: 0x00000001, end_addr: 0x0000001F},
-          %{start_addr: 0x00000030, end_addr: 0x0000003F}
+          %{start_addr: 0x0001_0000, end_addr: 0x001F_0000},
+          %{start_addr: 0x0030_0000, end_addr: 0xFFFF_FFFF}
         ]
       }
 

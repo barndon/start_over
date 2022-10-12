@@ -17,8 +17,8 @@ defmodule StartOverWeb.OrganizationViewTest do
         routes: [
           %{
             devaddr_ranges: [
-              %{end_addr: "001F", start_addr: "0001"},
-              %{end_addr: "003F", start_addr: "0030"}
+              %{end_addr: "001F0000", start_addr: "00010000"},
+              %{end_addr: "FFFFFFFF", start_addr: "00300000"}
             ],
             euis: [
               %{
@@ -40,8 +40,8 @@ defmodule StartOverWeb.OrganizationViewTest do
           },
           %{
             devaddr_ranges: [
-              %{end_addr: "001F", start_addr: "0001"},
-              %{end_addr: "003F", start_addr: "0030"}
+              %{end_addr: "001F0000", start_addr: "00010000"},
+              %{end_addr: "FFFFFFFF", start_addr: "00300000"}
             ],
             euis: [
               %{
@@ -77,8 +77,8 @@ defmodule StartOverWeb.OrganizationViewTest do
           },
           %{
             devaddr_ranges: [
-              %{end_addr: "001F", start_addr: "0001"},
-              %{end_addr: "003F", start_addr: "0030"}
+              %{start_addr: "00010000", end_addr: "001F0000"},
+              %{start_addr: "00300000", end_addr: "FFFFFFFF"}
             ],
             euis: [
               %{

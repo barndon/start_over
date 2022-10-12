@@ -38,8 +38,8 @@ defmodule StartOver.Fixtures do
         %{app_eui: valid_app_eui_integer(), dev_eui: valid_dev_eui_integer()}
       ],
       devaddr_ranges: [
-        {0x0001, 0x001F},
-        {0x0030, 0x003F}
+        {0x0001_0000, 0x001F_0000},
+        {0x0030_0000, 0xFFFF_FFFF}
       ]
     }
   end

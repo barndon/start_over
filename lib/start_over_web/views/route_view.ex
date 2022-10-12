@@ -7,9 +7,9 @@ defmodule StartOverWeb.RouteView do
   alias StartOver.Core.GwmpOpts
   alias StartOver.Core.PacketRouterOpts
 
-  @bytes_in_an_eui 16
-  @bytes_in_a_devaddr 4
-  @bytes_in_a_net_id 3
+  @nybbles_in_an_eui 16
+  @nybbles_in_a_devaddr 8
+  @nybbles_in_a_net_id 6
 
   def render("routes.json", %{routes: routes}) do
     %{
@@ -30,7 +30,7 @@ defmodule StartOverWeb.RouteView do
   def net_id_json(id) when is_integer(id) do
     id
     |> Integer.to_string(16)
-    |> String.pad_leading(@bytes_in_a_net_id * 2, "0")
+    |> String.pad_leading(@nybbles_in_a_net_id, "0")
   end
 
   def server_json(%RouteServer{} = server) do
@@ -79,13 +79,13 @@ defmodule StartOverWeb.RouteView do
   def eui_to_hex_string(eui) do
     eui
     |> Integer.to_string(16)
-    |> String.pad_leading(@bytes_in_an_eui, "0")
+    |> String.pad_leading(@nybbles_in_an_eui, "0")
   end
 
   def devaddr_to_hex_string(devaddr) do
     devaddr
     |> Integer.to_string(16)
-    |> String.pad_leading(@bytes_in_a_devaddr, "0")
+    |> String.pad_leading(@nybbles_in_a_devaddr, "0")
   end
 
   def devaddr_range_json(ranges) do

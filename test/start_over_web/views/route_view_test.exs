@@ -38,8 +38,8 @@ defmodule StartOverWeb.Views.RouteViewTest do
             }
           ],
           devaddr_ranges: [
-            %{start_addr: "0001", end_addr: "001F"},
-            %{start_addr: "0030", end_addr: "003F"}
+            %{start_addr: "00010000", end_addr: "001F0000"},
+            %{start_addr: "00300000", end_addr: "FFFFFFFF"}
           ]
         }
       ]
@@ -48,7 +48,7 @@ defmodule StartOverWeb.Views.RouteViewTest do
     assert(got == expected)
   end
 
-  test "EUI strings are 16 characters wide" do
+  test "EUI strings are 16 hex characters wide" do
     got =
       0xFF
       |> RouteView.eui_to_hex_string()
@@ -59,18 +59,18 @@ defmodule StartOverWeb.Views.RouteViewTest do
     assert(got == expected)
   end
 
-  test "Devaddr strings are 4 characters wide" do
+  test "Devaddr strings are 8 hex characters wide" do
     got =
-      0xFF
+      0xFFFF
       |> RouteView.devaddr_to_hex_string()
       |> String.length()
 
-    expected = 4
+    expected = 8
 
     assert(got == expected)
   end
 
-  test "NetID strings are 6 characters wide" do
+  test "NetID strings are 6 hex characters wide" do
     got =
       0xFF
       |> RouteView.net_id_json()
