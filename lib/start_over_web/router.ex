@@ -11,7 +11,7 @@ defmodule StartOverWeb.Router do
     get "/routes", RouteController, :index
     get "/organizations", OrganizationController, :index
     post "/organizations", OrganizationController, :create
-    post "/organizations/:oui", OrganizationController, :update
+    put "/organizations/:oui", OrganizationController, :update
   end
 
   # Enables LiveDashboard only for development

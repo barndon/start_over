@@ -49,7 +49,7 @@ defmodule StartOverWeb.OrganizationControllerTest do
       updated_json = OrganizationView.organization_json(updated_org)
 
       conn =
-        post(conn, Routes.organization_path(conn, :update, valid_org.oui), %{
+        put(conn, Routes.organization_path(conn, :update, valid_org.oui), %{
           organization: updated_json
         })
 
