@@ -27,8 +27,8 @@ defmodule StartOver.Repo.Migrations.CreateRoutes do
 
     create table("route_devaddr_ranges") do
       add :route_id, references(:routes, on_delete: :delete_all)
-      add :start_addr, :integer, null: false
-      add :end_addr, :integer, null: false
+      add :start_addr, :bigint, null: false
+      add :end_addr, :bigint, null: false
 
       timestamps()
     end
