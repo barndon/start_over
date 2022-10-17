@@ -14,6 +14,24 @@ defmodule StartOver do
     |> Enum.map(&Core.Route.from_db/1)
   end
 
+  def get_route(id) do
+    id
+    |> DB.get_route!()
+    |> Core.Route.from_db()
+  end
+
+  def create_route(params) do
+    params
+    |> DB.create_route!()
+    |> Core.Route.from_db()
+  end
+
+  def update_route(params) do
+    params
+    |> DB.update_route!()
+    |> Core.Route.from_db()
+  end
+
   def list_organizations do
     DB.list_organizations()
     |> Enum.map(&Core.Organization.from_db/1)
@@ -21,15 +39,23 @@ defmodule StartOver do
 
   def get_organization(oui) do
     oui
-    |> DB.get_organization()
+    |> DB.get_organization!()
     |> Core.Organization.from_db()
   end
 
   def create_organization(%Core.Organization{} = org) do
-    :ok = DB.create_organization(org)
+    org
+    |> DB.create_organization!()
+    |> Core.Organization.from_db()
   end
 
-  def update_organization(%Core.Organization{} = updated_org) do
-    :ok = DB.update_organization(updated_org)
+  def update_organization(%Core.Organization{} = org) do
+    org
+    |> DB.update_organization!()
+    |> Core.Organization.from_db()
+  end
+
+  def delete_organization!(oui) when is_integer(oui) do
+    :ok = DB.delete_organization!(oui)
   end
 end

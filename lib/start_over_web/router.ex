@@ -1,6 +1,8 @@
 defmodule StartOverWeb.Router do
   use StartOverWeb, :router
 
+  use Plug.ErrorHandler
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -8,10 +10,29 @@ defmodule StartOverWeb.Router do
   scope "/api/v1", StartOverWeb do
     pipe_through :api
 
-    get "/routes", RouteController, :index
     get "/organizations", OrganizationController, :index
     post "/organizations", OrganizationController, :create
+    get "/organizations/:oui", OrganizationController, :show
     put "/organizations/:oui", OrganizationController, :update
+    delete "/organizations/:oui", OrganizationController, :delete
+
+    get "/routes", RouteController, :index
+    get "/routes/:id", RouteController, :show
+    post "/routes", RouteController, :create
+    put "/routes/:id", RouteController, :update
+  end
+
+  @impl Plug.ErrorHandler
+  def handle_errors(conn, %{kind: :error, reason: %Ecto.NoResultsError{}}) do
+    send_resp(conn, 404, "")
+  end
+
+  def handle_errors(conn, %{kind: :error, reason: %Ecto.InvalidChangesetError{}}) do
+    send_resp(conn, 400, "")
+  end
+
+  def handle_errors(conn, %{kind: :error, reason: %Ecto.ConstraintError{}}) do
+    send_resp(conn, 409, "")
   end
 
   # Enables LiveDashboard only for development

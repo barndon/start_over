@@ -9,7 +9,7 @@ defmodule StartOver.DB.DevaddrRange do
     field :start_addr, :integer
     field :end_addr, :integer
 
-    belongs_to :route, DB.Route
+    belongs_to :route, DB.Route, type: Ecto.UUID
 
     timestamps()
   end

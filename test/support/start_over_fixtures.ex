@@ -24,6 +24,7 @@ defmodule StartOver.Fixtures do
 
   def valid_core_route do
     %Core.Route{
+      id: nil,
       oui: 1,
       net_id: 7,
       server: %Core.RouteServer{
@@ -46,6 +47,7 @@ defmodule StartOver.Fixtures do
 
   def valid_http_roaming_route do
     valid_core_route()
+    |> Map.put(:id, "11111111-2222-3333-4444-555555555555")
     |> Map.put(:server, %Core.RouteServer{
       host: "server1.testdomain.com",
       port: 8888,
@@ -58,6 +60,7 @@ defmodule StartOver.Fixtures do
 
   def valid_gwmp_route do
     valid_core_route()
+    |> Map.put(:id, "22222222-2222-3333-4444-555555555555")
     |> Map.put(:server, %Core.RouteServer{
       host: "server1.testdomain.com",
       port: 8888,
@@ -84,6 +87,7 @@ defmodule StartOver.Fixtures do
 
   def valid_packet_router_route do
     valid_core_route()
+    |> Map.put(:id, "33333333-2222-3333-4444-555555555555")
     |> Map.put(:server, %Core.RouteServer{
       host: "server1.testdomain.com",
       port: 8888,

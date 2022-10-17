@@ -9,7 +9,7 @@ defmodule StartOver.DB.EuiPair do
     field :app_eui, :decimal
     field :dev_eui, :decimal
 
-    belongs_to :route, DB.Route
+    belongs_to :route, DB.Route, type: Ecto.UUID
 
     timestamps()
   end

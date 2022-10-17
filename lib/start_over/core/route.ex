@@ -1,5 +1,5 @@
 defmodule StartOver.Core.Route do
-  defstruct [:oui, :net_id, :server, euis: [], devaddr_ranges: []]
+  defstruct [:id, :oui, :net_id, :server, euis: [], devaddr_ranges: []]
 
   alias StartOver.Core.RouteServer
   alias StartOver.DB
@@ -17,6 +17,7 @@ defmodule StartOver.Core.Route do
 
   def from_db(%DB.Route{} = db_route) do
     %__MODULE__{
+      id: db_route.id,
       oui: db_route.oui,
       net_id: db_route.net_id,
       server: RouteServer.from_db(db_route.server),
@@ -69,6 +70,9 @@ defmodule StartOver.Core.Route do
   def from_web(json_params) do
     json_params
     |> Enum.reduce(%__MODULE__{}, fn
+      {"id", id}, acc ->
+        Map.put(acc, :id, id)
+
       {"oui", id}, acc ->
         Map.put(acc, :oui, oui_from_web(id))
 

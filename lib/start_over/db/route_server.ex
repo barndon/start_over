@@ -12,7 +12,7 @@ defmodule StartOver.DB.RouteServer do
 
     embeds_one :protocol_opts, DB.ProtocolOpts
 
-    belongs_to :route, DB.Route
+    belongs_to :route, DB.Route, type: Ecto.UUID
 
     timestamps()
   end

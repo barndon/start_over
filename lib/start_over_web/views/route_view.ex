@@ -11,15 +11,36 @@ defmodule StartOverWeb.RouteView do
   @nybbles_in_a_devaddr 8
   @nybbles_in_a_net_id 6
 
+  def render("route.json", %{route: route}) do
+    route_json(route)
+  end
+
   def render("routes.json", %{routes: routes}) do
     %{
       routes: Enum.map(routes, &route_json/1)
     }
   end
 
+  def render("organization_routes.json", %{routes: routes}) do
+    %{
+      routes: Enum.map(routes, &organization_route_json/1)
+    }
+  end
+
   def route_json(%Route{} = route) do
     %{
+      id: route.id,
       oui: route.oui,
+      net_id: net_id_json(route.net_id),
+      server: server_json(route.server),
+      euis: Enum.map(route.euis, &eui_pair_to_hex_strings/1),
+      devaddr_ranges: devaddr_range_json(route.devaddr_ranges)
+    }
+  end
+
+  def organization_route_json(%Route{} = route) do
+    %{
+      id: route.id,
       net_id: net_id_json(route.net_id),
       server: server_json(route.server),
       euis: Enum.map(route.euis, &eui_pair_to_hex_strings/1),

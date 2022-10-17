@@ -20,7 +20,43 @@ defmodule StartOverWeb.Views.RouteViewTest do
     expected = %{
       routes: [
         %{
+          id: "11111111-2222-3333-4444-555555555555",
           oui: 1,
+          net_id: "000007",
+          server: %{
+            host: "server1.testdomain.com",
+            port: 8888,
+            protocol: %{
+              type: "http_roaming",
+              dedupe_window: 1200,
+              auth_header: "x-helium-auth"
+            }
+          },
+          euis: [
+            %{
+              app_eui: "BEEEEEEEEEEEEEEF",
+              dev_eui: "FAAAAAAAAAAAAACE"
+            }
+          ],
+          devaddr_ranges: [
+            %{start_addr: "00010000", end_addr: "001F0000"},
+            %{start_addr: "00300000", end_addr: "FFFFFFFF"}
+          ]
+        }
+      ]
+    }
+
+    assert(got == expected)
+  end
+
+  test "can render a list of routes as part of an organization" do
+    route = valid_http_roaming_route()
+    got = render(RouteView, "organization_routes.json", %{routes: [route]})
+
+    expected = %{
+      routes: [
+        %{
+          id: "11111111-2222-3333-4444-555555555555",
           net_id: "000007",
           server: %{
             host: "server1.testdomain.com",

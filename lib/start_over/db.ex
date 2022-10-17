@@ -6,7 +6,38 @@ defmodule StartOver.DB do
   def list_routes do
     DB.Route
     |> Repo.all()
-    |> Repo.preload([:devaddr_ranges, :euis, :server])
+    |> Enum.map(&route_preloads/1)
+  end
+
+  def get_route!(id) do
+    DB.Route
+    |> Repo.get!(id)
+    |> route_preloads()
+  end
+
+  def create_route!(params) do
+    result =
+      %DB.Route{}
+      |> DB.Route.changeset(params)
+      |> Repo.insert!()
+
+    DB.UpdateNotifier.notify_cast()
+    result
+  end
+
+  def update_route!(params) do
+    current =
+      DB.Route
+      |> Repo.get!(params.id)
+      |> route_preloads()
+
+    result =
+      current
+      |> DB.Route.changeset(params)
+      |> Repo.insert_or_update!()
+
+    DB.UpdateNotifier.notify_cast()
+    result
   end
 
   def list_organizations do
@@ -15,29 +46,23 @@ defmodule StartOver.DB do
     |> Enum.map(&organization_preloads/1)
   end
 
-  def create_organization(params) do
+  def create_organization!(%Core.Organization{} = core_org) do
     result =
       %DB.Organization{}
-      |> DB.Organization.changeset(params)
-      |> Repo.insert()
+      |> DB.Organization.changeset(core_org)
+      |> Repo.insert!()
 
-    case result do
-      {:ok, _} ->
-        DB.UpdateNotifier.notify_cast()
-        :ok
-
-      {:error, e} ->
-        {:error, e}
-    end
+    DB.UpdateNotifier.notify_cast()
+    result
   end
 
-  def get_organization(oui) do
+  def get_organization!(oui) when is_integer(oui) do
     DB.Organization
-    |> Repo.get(oui)
+    |> Repo.get!(oui)
     |> organization_preloads()
   end
 
-  def update_organization(%Core.Organization{} = new_org) do
+  def update_organization!(%Core.Organization{} = new_org) do
     current =
       case Repo.get(DB.Organization, new_org.oui) do
         nil ->
@@ -51,19 +76,13 @@ defmodule StartOver.DB do
     result =
       current
       |> DB.Organization.changeset(new_org)
-      |> Repo.insert_or_update()
+      |> Repo.insert_or_update!()
 
-    case result do
-      {:ok, _} ->
-        DB.UpdateNotifier.notify_cast()
-        :ok
-
-      {:error, e} ->
-        {:error, e}
-    end
+    DB.UpdateNotifier.notify_cast()
+    result
   end
 
-  def delete_organization(oui) when is_integer(oui) do
+  def delete_organization!(oui) when is_integer(oui) do
     current = Repo.get!(DB.Organization, oui)
 
     case Repo.delete(current) do
@@ -76,15 +95,11 @@ defmodule StartOver.DB do
     end
   end
 
-  defp organization_preloads(nil), do: nil
-
-  defp organization_preloads({:ok, org}) do
-    organization_preloads(org)
+  defp route_preloads(%DB.Route{} = route) do
+    Repo.preload(route, [:server, :devaddr_ranges, :euis])
   end
 
   defp organization_preloads(%DB.Organization{} = org) do
     Repo.preload(org, [:routes, [routes: [:server, :devaddr_ranges, :euis]]])
   end
-
-  defp organization_preloads({:error, _} = error), do: error
 end

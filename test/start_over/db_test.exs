@@ -2,15 +2,275 @@ defmodule StartOver.DBTest do
   use StartOver.DataCase, async: false
 
   alias StartOver.DB
+  alias StartOver.Core
 
   import StartOver.Fixtures
 
-  describe "DB.create_organization/1" do
+  ##
+  ## Routes
+  ##
+
+  describe "DB.list_routes/0" do
+    test "returns an empty list when no route records exist" do
+      assert [] == DB.list_routes()
+    end
+
+    test "returns a %DB.Route{} when a route record exists" do
+      db_org = create_valid_organization()
+      assert length(db_org.routes) > 0
+      assert Enum.sort(db_org.routes) == Enum.sort(DB.list_routes())
+    end
+  end
+
+  describe "DB.get_route!/1" do
+    test "raises an exception if no record exists for the given ID" do
+      assert_raise Ecto.NoResultsError, fn ->
+        some_uuid = Ecto.UUID.generate()
+        DB.get_route!(some_uuid)
+      end
+    end
+
+    test "returns a %DB.Route{} if a record exists for the given ID" do
+      db_org = create_valid_organization()
+      expected_route = hd(db_org.routes)
+
+      got = DB.get_route!(expected_route.id)
+
+      assert expected_route == got
+    end
+  end
+
+  describe "DB.create_route!/1" do
+    test "returns a %DB.Route{} given valid inputs" do
+      valid_org = create_valid_organization()
+
+      new_core_route = %Core.Route{
+        oui: valid_org.oui,
+        net_id: 11,
+        server: %Core.RouteServer{
+          host: "newserver.testdomain.com",
+          port: 4567,
+          protocol_opts: %Core.HttpRoamingOpts{
+            dedupe_window: 1200,
+            auth_header: "x-helium-auth"
+          }
+        },
+        devaddr_ranges: [
+          {0x1000_0000, 0x1000_FFFF}
+        ],
+        euis: [
+          %{
+            app_eui: 0x10000000_00000000,
+            dev_eui: 0x20000000_00000000
+          }
+        ]
+      }
+
+      got = DB.create_route!(new_core_route)
+
+      assert %DB.Route{} = got
+    end
+
+    test "raises InvalidChangesetError if the inputs refer to a non-existant Organization" do
+      assert [] == Repo.all(DB.Organization)
+
+      new_core_route = %Core.Route{
+        oui: 99,
+        net_id: 11,
+        server: %Core.RouteServer{
+          host: "newserver.testdomain.com",
+          port: 4567,
+          protocol_opts: %Core.HttpRoamingOpts{
+            dedupe_window: 1200,
+            auth_header: "x-helium-auth"
+          }
+        },
+        devaddr_ranges: [
+          {0x1000_0000, 0x1000_FFFF}
+        ],
+        euis: [
+          %{
+            app_eui: 0x10000000_00000000,
+            dev_eui: 0x20000000_00000000
+          }
+        ]
+      }
+
+      assert_raise Ecto.InvalidChangesetError, fn ->
+        DB.create_route!(new_core_route)
+      end
+    end
+
+    test "raises ConstraintError if a record with the given ID already exists" do
+      valid_org = create_valid_organization()
+
+      valid_route_id =
+        valid_org
+        |> Map.get(:routes)
+        |> hd()
+        |> Map.get(:id)
+
+      new_core_route = %Core.Route{
+        id: valid_route_id,
+        oui: valid_org.oui,
+        net_id: 11,
+        server: %Core.RouteServer{
+          host: "newserver.testdomain.com",
+          port: 4567,
+          protocol_opts: %Core.HttpRoamingOpts{
+            dedupe_window: 1200,
+            auth_header: "x-helium-auth"
+          }
+        },
+        devaddr_ranges: [
+          {0x1000_0000, 0x1000_FFFF}
+        ],
+        euis: [
+          %{
+            app_eui: 0x10000000_00000000,
+            dev_eui: 0x20000000_00000000
+          }
+        ]
+      }
+
+      assert_raise Ecto.ConstraintError, fn ->
+        DB.create_route!(new_core_route)
+      end
+    end
+  end
+
+  describe "DB.update_route!/1" do
+    test "returns a %DB.Route{} given valid inputs" do
+      valid_org = create_valid_organization()
+      existing_db_route = hd(valid_org.routes)
+
+      updated_core_route = %Core.Route{
+        id: existing_db_route.id,
+        oui: valid_org.oui,
+        net_id: 11,
+        server: %Core.RouteServer{
+          host: "newserver.testdomain.com",
+          port: 4567,
+          protocol_opts: %Core.HttpRoamingOpts{
+            dedupe_window: 1200,
+            auth_header: "x-helium-auth"
+          }
+        },
+        devaddr_ranges: [
+          {0x1000_0000, 0x1000_FFFF}
+        ],
+        euis: [
+          %{
+            app_eui: 0x10000000_00000000,
+            dev_eui: 0x20000000_00000000
+          }
+        ]
+      }
+
+      got =
+        updated_core_route
+        |> DB.update_route!()
+        |> Core.Route.from_db()
+
+      assert updated_core_route == got
+    end
+
+    test "raises Ecto.InvalidChangesetError given a valid ID and invalid OUI" do
+      valid_org = create_valid_organization()
+      existing_db_route = hd(valid_org.routes)
+
+      updated_core_route = %Core.Route{
+        id: existing_db_route.id,
+        oui: 666,
+        net_id: 11,
+        server: %Core.RouteServer{
+          host: "newserver.testdomain.com",
+          port: 4567,
+          protocol_opts: %Core.HttpRoamingOpts{
+            dedupe_window: 1200,
+            auth_header: "x-helium-auth"
+          }
+        },
+        devaddr_ranges: [
+          {0x1000_0000, 0x1000_FFFF}
+        ],
+        euis: [
+          %{
+            app_eui: 0x10000000_00000000,
+            dev_eui: 0x20000000_00000000
+          }
+        ]
+      }
+
+      assert_raise Ecto.InvalidChangesetError, fn ->
+        DB.update_route!(updated_core_route)
+      end
+    end
+
+    test "raises Ecto.NoResultsError given an invalid ID" do
+      valid_org = create_valid_organization()
+
+      non_existant_uuid = Ecto.UUID.generate()
+
+      updated_core_route = %Core.Route{
+        id: non_existant_uuid,
+        oui: valid_org.oui,
+        net_id: 11,
+        server: %Core.RouteServer{
+          host: "newserver.testdomain.com",
+          port: 4567,
+          protocol_opts: %Core.HttpRoamingOpts{
+            dedupe_window: 1200,
+            auth_header: "x-helium-auth"
+          }
+        },
+        devaddr_ranges: [
+          {0x1000_0000, 0x1000_FFFF}
+        ],
+        euis: [
+          %{
+            app_eui: 0x10000000_00000000,
+            dev_eui: 0x20000000_00000000
+          }
+        ]
+      }
+
+      assert_raise Ecto.NoResultsError, fn ->
+        DB.update_route!(updated_core_route)
+      end
+    end
+  end
+
+  ##
+  ## Organizations
+  ##
+
+  describe "DB.list_organizations/1" do
+    test "returns an empty list when no organizations records exist" do
+      assert [] == Repo.all(DB.Organization)
+      assert [] == DB.list_organizations()
+    end
+
+    test "returns a list of %DB.Organization{} when records exist" do
+      assert [] == Repo.all(DB.Organization)
+      valid_org = valid_core_organization()
+
+      expected_org =
+        %DB.Organization{}
+        |> DB.Organization.changeset(valid_org)
+        |> Repo.insert!()
+        |> Repo.preload([:routes, routes: [:server, :devaddr_ranges, :euis]])
+
+      assert [expected_org] == DB.list_organizations()
+    end
+  end
+
+  describe "DB.create_organization!/1" do
     test "inserts database records given a valid Core.Organization" do
       assert(organization_tables_empty())
 
       valid_org = valid_core_organization()
-      assert(:ok == DB.create_organization(valid_org))
+      assert(%DB.Organization{} = DB.create_organization!(valid_org))
 
       assert(1 == length(Repo.all(DB.Organization)))
       assert(3 == length(Repo.all(DB.Route)))
