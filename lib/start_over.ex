@@ -37,7 +37,7 @@ defmodule StartOver do
     |> Enum.map(&Core.Organization.from_db/1)
   end
 
-  def get_organization(oui) do
+  def get_organization(oui) when is_integer(oui) do
     oui
     |> DB.get_organization!()
     |> Core.Organization.from_db()

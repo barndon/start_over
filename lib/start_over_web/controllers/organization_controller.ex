@@ -39,12 +39,11 @@ defmodule StartOverWeb.OrganizationController do
     |> render("organization.json", organization: updated_org)
   end
 
-  def show(conn, %{"oui" => oui}) do
+  def show(conn, %{"oui" => oui_param}) do
     org =
-      oui
-      |> String.to_integer(10)
+      oui_param
+      |> Core.Organization.oui_from_web()
       |> StartOver.get_organization()
-      |> Core.Organization.from_db()
 
     conn
     |> put_status(200)

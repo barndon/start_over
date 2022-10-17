@@ -20,13 +20,17 @@ defmodule StartOver.Core.Organization do
       json_params,
       %__MODULE__{},
       fn
-        {"oui", oui}, acc -> Map.put(acc, :oui, oui)
+        {"oui", oui}, acc -> Map.put(acc, :oui, oui_from_web(oui))
         {"owner_wallet_id", id}, acc -> Map.put(acc, :owner_wallet_id, id)
         {"payer_wallet_id", id}, acc -> Map.put(acc, :payer_wallet_id, id)
         {"routes", routes}, acc -> Map.put(acc, :routes, Enum.map(routes, &Route.from_web/1))
       end
     )
   end
+
+  def oui_from_web(oui) when is_integer(oui), do: oui
+
+  def oui_from_web(oui) when is_binary(oui), do: String.to_integer(oui)
 
   def from_db(%DB.Organization{} = db_org) do
     %__MODULE__{

@@ -10,9 +10,7 @@ defmodule StartOverWeb.OrganizationView do
   end
 
   def render("organization.json", %{organization: org}) do
-    %{
-      organization: organization_json(org)
-    }
+    organization_json(org)
   end
 
   def organization_json(org) do
