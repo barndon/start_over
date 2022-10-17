@@ -14,8 +14,8 @@ defmodule StartOver.DB.ProtocolOpts do
     fields = %{
       type: :http_roaming,
       opts: %{
-        dedupe_window: opts.dedupe_window,
-        auth_header: opts.auth_header
+        "dedupe_window" => opts.dedupe_window,
+        "auth_header" => opts.auth_header
       }
     }
 
@@ -26,7 +26,10 @@ defmodule StartOver.DB.ProtocolOpts do
     fields = %{
       type: :gwmp,
       opts: %{
-        mapping: Enum.map(opts.mapping, fn {region, port} -> %{region: region, port: port} end)
+        "mapping" =>
+          Enum.map(opts.mapping, fn {region, port} ->
+            %{"region" => Atom.to_string(region), "port" => port}
+          end)
       }
     }
 

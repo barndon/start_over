@@ -16,6 +16,7 @@ defmodule StartOverWeb.OrganizationViewTest do
         payer_wallet_id: "payers_wallet_id",
         routes: [
           %{
+            id: "11111111-2222-3333-4444-555555555555",
             devaddr_ranges: [
               %{end_addr: "001F0000", start_addr: "00010000"},
               %{end_addr: "FFFFFFFF", start_addr: "00300000"}
@@ -39,6 +40,7 @@ defmodule StartOverWeb.OrganizationViewTest do
             }
           },
           %{
+            id: "22222222-2222-3333-4444-555555555555",
             devaddr_ranges: [
               %{end_addr: "001F0000", start_addr: "00010000"},
               %{end_addr: "FFFFFFFF", start_addr: "00300000"}
@@ -76,6 +78,7 @@ defmodule StartOverWeb.OrganizationViewTest do
             }
           },
           %{
+            id: "33333333-2222-3333-4444-555555555555",
             devaddr_ranges: [
               %{start_addr: "00010000", end_addr: "001F0000"},
               %{start_addr: "00300000", end_addr: "FFFFFFFF"}

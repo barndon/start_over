@@ -278,12 +278,24 @@ defmodule StartOver.DBTest do
       assert(6 == length(Repo.all(DB.DevaddrRange)))
       assert(3 == length(Repo.all(DB.RouteServer)))
     end
+
+    test "raises ConstraintError if the organization record already exists" do
+      valid_core_org = valid_core_organization()
+
+      %DB.Organization{}
+      |> DB.Organization.changeset(valid_core_org)
+      |> Repo.insert!()
+
+      assert_raise Ecto.ConstraintError, fn ->
+        DB.create_organization!(valid_core_org)
+      end
+    end
   end
 
-  describe "DB.get_organization/1" do
+  describe "DB.get_organization!/1" do
     test "returns a DB.Organization with fields correctly preloaded when a record exists with the given OUI" do
       valid_org = valid_core_organization()
-      DB.create_organization(valid_org)
+      DB.create_organization!(valid_org)
 
       assert(
         %DB.Organization{
@@ -319,20 +331,48 @@ defmodule StartOver.DBTest do
               ]
             }
           ]
-        } = DB.get_organization(valid_org.oui)
+        } = DB.get_organization!(valid_org.oui)
       )
     end
 
-    test "returns nil when no record exists with the given OUI" do
-      assert(nil == DB.get_organization(1))
+    test "raises NoResultsError when no record exists with the given OUI" do
+      assert [] == Repo.all(DB.Organization)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        DB.get_organization!(1)
+      end
     end
   end
 
-  describe "DB.delete_organization/1" do
+  describe "DB.update_organization!/1" do
+    test "returns a DB.Organization when inputs are valid" do
+      valid_db_org = create_valid_organization()
+      valid_core_org = Core.Organization.from_db(valid_db_org)
+
+      updated_core_org =
+        valid_core_org
+        |> Map.put(:owner_wallet_id, "updated_owner_wallet")
+        |> Map.put(:payer_wallet_id, "updated_payer_wallet")
+
+      updated_db_org = DB.update_organization!(updated_core_org)
+
+      got = Core.Organization.from_db(updated_db_org)
+
+      assert updated_core_org == got
+    end
+
+    test "returns a DB.Organization when no record exists" do
+      assert [] == Repo.all(DB.Organization)
+      valid_core_org = valid_core_organization()
+      assert %DB.Organization{} = DB.update_organization!(valid_core_org)
+    end
+  end
+
+  describe "DB.delete_organization!/1" do
     test "removes records from all relations" do
       assert(organization_tables_empty())
       valid_org = valid_core_organization()
-      assert(:ok == DB.create_organization(valid_org))
+      assert %DB.Organization{} = DB.create_organization!(valid_org)
 
       assert(1 == length(Repo.all(DB.Organization)))
       assert(3 == length(Repo.all(DB.Route)))
@@ -340,11 +380,23 @@ defmodule StartOver.DBTest do
       assert(6 == length(Repo.all(DB.DevaddrRange)))
       assert(3 == length(Repo.all(DB.RouteServer)))
 
-      :ok = DB.delete_organization(valid_org.oui)
+      :ok = DB.delete_organization!(valid_org.oui)
 
       assert(organization_tables_empty())
     end
+
+    test "raises NoResultsError when no record with the given OUI exists" do
+      assert [] == Repo.all(DB.Organization)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        DB.delete_organization!(666)
+      end
+    end
   end
+
+  ##
+  ## Private Functions
+  ##
 
   defp organization_tables_empty do
     [] == Repo.all(DB.Organization) &&
@@ -352,5 +404,13 @@ defmodule StartOver.DBTest do
       [] == Repo.all(DB.EuiPair) &&
       [] == Repo.all(DB.DevaddrRange) &&
       [] == Repo.all(DB.RouteServer)
+  end
+
+  defp create_valid_organization do
+    valid_org = valid_core_organization()
+
+    %DB.Organization{}
+    |> DB.Organization.changeset(valid_org)
+    |> Repo.insert!()
   end
 end

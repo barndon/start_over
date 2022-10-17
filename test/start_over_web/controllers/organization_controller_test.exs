@@ -16,7 +16,7 @@ defmodule StartOverWeb.OrganizationControllerTest do
 
     test "returns a list of organizations when organizations exist", %{conn: conn} do
       valid_core_organization()
-      |> DB.create_organization()
+      |> DB.create_organization!()
 
       conn = get(conn, Routes.organization_path(conn, :index))
       assert %{"organizations" => orgs} = json_response(conn, 200)
@@ -31,16 +31,28 @@ defmodule StartOverWeb.OrganizationControllerTest do
       valid_org = valid_core_organization()
       valid_json = OrganizationView.organization_json(valid_org)
 
-      conn = post(conn, Routes.organization_path(conn, :create), %{organization: valid_json})
+      conn = post(conn, Routes.organization_path(conn, :create), valid_json)
 
-      assert json_response(conn, 201) == %{"status" => "success"}
+      assert %{"organization" => %{}} = json_response(conn, 201)
+    end
+
+    test "returns 409 when a record with the given OUI already exists", %{conn: conn} do
+      valid_org = valid_core_organization()
+      valid_json = OrganizationView.organization_json(valid_org)
+
+      conn = post(conn, Routes.organization_path(conn, :create), valid_json)
+      assert json_response(conn, 201)
+
+      assert_error_sent 409, fn ->
+        post(conn, Routes.organization_path(conn, :create), valid_json)
+      end
     end
   end
 
   describe "update organization" do
     test "returns 200 given valid inputs", %{conn: conn} do
       valid_org = valid_core_organization()
-      :ok = DB.create_organization(valid_org)
+      DB.create_organization!(valid_org)
 
       updated_org =
         valid_org
@@ -48,12 +60,47 @@ defmodule StartOverWeb.OrganizationControllerTest do
 
       updated_json = OrganizationView.organization_json(updated_org)
 
-      conn =
-        put(conn, Routes.organization_path(conn, :update, valid_org.oui), %{
-          organization: updated_json
-        })
+      conn = put(conn, Routes.organization_path(conn, :update, valid_org.oui), updated_json)
 
-      assert json_response(conn, 200) == %{"status" => "success"}
+      assert %{"organization" => %{}} = json_response(conn, 200)
+    end
+
+    test "returns 200 when no organization record exists and inputs are valid", %{conn: conn} do
+      assert [] == Repo.all(DB.Organization)
+
+      valid_org = valid_core_organization()
+      valid_json = OrganizationView.organization_json(valid_org)
+
+      conn = put(conn, Routes.organization_path(conn, :update, valid_org.oui), valid_json)
+
+      assert %{"organization" => %{}} = json_response(conn, 200)
+    end
+  end
+
+  describe "show organization" do
+    test "returns 404 when no record exists for the given OUI", %{conn: conn} do
+      assert [] == Repo.all(DB.Organization)
+
+      assert_error_sent 404, fn ->
+        get(conn, Routes.organization_path(conn, :show, -1))
+      end
+    end
+  end
+
+  describe "delete organization" do
+    test "returns 404 when no record exists for the given OUI", %{conn: conn} do
+      assert_error_sent 404, fn ->
+        delete(conn, Routes.organization_path(conn, :delete, 666))
+      end
+    end
+
+    test "returns 204 given valid inputs", %{conn: conn} do
+      valid_core_org = valid_core_organization()
+      DB.create_organization!(valid_core_org)
+
+      conn = delete(conn, Routes.organization_path(conn, :delete, valid_core_org.oui))
+
+      assert conn.status == 204
     end
   end
 end

@@ -34,6 +34,7 @@ defmodule StartOver.DB.Organization do
   def changeset(organization = %__MODULE__{}, fields = %{}) do
     organization
     |> cast(fields, [:oui, :owner_wallet_id, :payer_wallet_id])
+    |> unique_constraint(:oui)
     |> cast_assoc(:routes)
   end
 end

@@ -10,31 +10,52 @@ defmodule StartOverWeb.OrganizationController do
     render(conn, "organizations.json", organizations: orgs)
   end
 
-  def create(conn, %{"organization" => params}) do
-    params
-    |> Core.Organization.from_web()
-    |> StartOver.create_organization()
+  def create(conn, params) do
+    org =
+      params
+      |> Core.Organization.from_web()
+      |> StartOver.create_organization()
 
     conn
     |> put_status(201)
-    |> json(%{status: "success"})
+    |> render("organization.json", organization: org)
   end
 
-  def update(conn, %{"oui" => oui, "organization" => updated_org}) do
-    result =
-      updated_org
+  def update(
+        %{
+          path_params: %{"oui" => oui},
+          body_params: updated_params
+        } = conn,
+        _params
+      ) do
+    updated_org =
+      updated_params
       |> Core.Organization.from_web()
       |> Map.put(:oui, oui)
       |> StartOver.update_organization()
 
-    case result do
-      :ok ->
-        conn
-        |> put_status(200)
-        |> json(%{status: "success"})
+    conn
+    |> put_status(200)
+    |> render("organization.json", organization: updated_org)
+  end
 
-      {:error, e} ->
-        {:error, e}
-    end
+  def show(conn, %{"oui" => oui}) do
+    org =
+      oui
+      |> String.to_integer(10)
+      |> StartOver.get_organization()
+      |> Core.Organization.from_db()
+
+    conn
+    |> put_status(200)
+    |> render("organization.json", organization: org)
+  end
+
+  def delete(conn, %{"oui" => oui}) when is_binary(oui) do
+    oui = String.to_integer(oui, 10)
+    StartOver.delete_organization!(oui)
+
+    conn
+    |> put_status(204)
   end
 end
