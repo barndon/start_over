@@ -16,6 +16,7 @@ defmodule StartOver.Core.OrganizationTest do
         "routes" => [
           %{
             "net_id" => 7,
+            "max_copies" => 2,
             "server" => %{
               "host" => "server1.testdomain.com",
               "port" => 8080,
@@ -34,6 +35,7 @@ defmodule StartOver.Core.OrganizationTest do
           },
           %{
             "net_id" => 8,
+            "max_copies" => 2,
             "server" => %{
               "host" => "server2.testdomain.com",
               "port" => 8080,
@@ -64,6 +66,7 @@ defmodule StartOver.Core.OrganizationTest do
         routes: [
           %Route{
             net_id: 7,
+            max_copies: 2,
             server: %RouteServer{
               host: "server1.testdomain.com",
               port: 8080,
@@ -81,6 +84,7 @@ defmodule StartOver.Core.OrganizationTest do
           },
           %Route{
             net_id: 8,
+            max_copies: 2,
             server: %RouteServer{
               host: "server2.testdomain.com",
               port: 8080,

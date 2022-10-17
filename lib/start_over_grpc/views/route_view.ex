@@ -13,6 +13,7 @@ defmodule StartOverGRPC.RouteView do
     %{
       oui: route.oui,
       net_id: route.net_id,
+      max_copies: route.max_copies,
       server: server_params(route.server),
       euis: Enum.map(route.euis, &eui_pair_params/1),
       devaddr_ranges: Enum.map(route.devaddr_ranges, &devaddr_range_params/1)

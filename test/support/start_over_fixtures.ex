@@ -27,6 +27,7 @@ defmodule StartOver.Fixtures do
       id: nil,
       oui: 1,
       net_id: 7,
+      max_copies: 2,
       server: %Core.RouteServer{
         host: "server1.testdomain.com",
         port: 8888,

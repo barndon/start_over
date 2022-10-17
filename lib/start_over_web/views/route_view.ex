@@ -32,6 +32,7 @@ defmodule StartOverWeb.RouteView do
       id: route.id,
       oui: route.oui,
       net_id: net_id_json(route.net_id),
+      max_copies: route.max_copies,
       server: server_json(route.server),
       euis: Enum.map(route.euis, &eui_pair_to_hex_strings/1),
       devaddr_ranges: devaddr_range_json(route.devaddr_ranges)

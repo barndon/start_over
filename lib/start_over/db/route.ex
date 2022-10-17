@@ -11,6 +11,7 @@ defmodule StartOver.DB.Route do
   schema("routes") do
     field :oui, :integer
     field :net_id, :integer
+    field :max_copies, :integer
 
     has_one :server, DB.RouteServer, on_replace: :delete
 
@@ -28,6 +29,7 @@ defmodule StartOver.DB.Route do
       id: core_route.id,
       oui: core_route.oui,
       net_id: core_route.net_id,
+      max_copies: core_route.max_copies,
       server: core_route.server,
       euis: core_route.euis,
       devaddr_ranges: devaddr_range_params(core_route.devaddr_ranges)
@@ -38,7 +40,7 @@ defmodule StartOver.DB.Route do
 
   def changeset(%__MODULE__{} = route, fields) do
     route
-    |> cast(fields, [:id, :net_id, :oui])
+    |> cast(fields, [:id, :net_id, :max_copies, :oui])
     |> unique_constraint(:id)
     |> foreign_key_constraint(:oui)
     |> cast_assoc(:devaddr_ranges)

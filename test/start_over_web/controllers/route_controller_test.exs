@@ -56,6 +56,7 @@ defmodule StartOverWeb.RouteControllerTest do
       new_route_params = %{
         "oui" => org.oui,
         "net_id" => "00000A",
+        "max_copies" => 3,
         "server" => %{
           "host" => "server10.testdomain.com",
           "port" => 4567,
@@ -92,6 +93,7 @@ defmodule StartOverWeb.RouteControllerTest do
         "id" => valid_route_id,
         "oui" => org.oui,
         "net_id" => "00000A",
+        "max_copies" => 5,
         "server" => %{
           "host" => "server10.testdomain.com",
           "port" => 4567,
@@ -118,6 +120,7 @@ defmodule StartOverWeb.RouteControllerTest do
       new_route_params = %{
         "oui" => 666,
         "net_id" => "00000A",
+        "max_copies" => 3,
         "server" => %{
           "host" => "server10.testdomain.com",
           "port" => 4567,
@@ -179,6 +182,7 @@ defmodule StartOverWeb.RouteControllerTest do
         "id" => non_existant_uuid,
         "oui" => 666,
         "net_id" => "00000A",
+        "max_copies" => 7,
         "server" => %{
           "host" => "server10.testdomain.com",
           "port" => 4567,
@@ -209,6 +213,7 @@ defmodule StartOverWeb.RouteControllerTest do
         "id" => existing_db_route.id,
         "oui" => 666,
         "net_id" => "00000A",
+        "max_copies" => 4,
         "server" => %{
           "host" => "server10.testdomain.com",
           "port" => 4567,

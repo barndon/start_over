@@ -1,5 +1,7 @@
 defmodule StartOver.Core.Route do
-  defstruct [:id, :oui, :net_id, :server, euis: [], devaddr_ranges: []]
+  @enforce_keys [:net_id, :server, :max_copies, :euis, :devaddr_ranges]
+
+  defstruct [:id, :oui, :net_id, :server, max_copies: 1, euis: [], devaddr_ranges: []]
 
   alias StartOver.Core.RouteServer
   alias StartOver.DB
@@ -20,6 +22,7 @@ defmodule StartOver.Core.Route do
       id: db_route.id,
       oui: db_route.oui,
       net_id: db_route.net_id,
+      max_copies: db_route.max_copies,
       server: RouteServer.from_db(db_route.server),
       euis: euis_from_db(db_route.euis),
       devaddr_ranges: devaddr_ranges_from_db(db_route.devaddr_ranges)
@@ -47,6 +50,7 @@ defmodule StartOver.Core.Route do
     %__MODULE__{
       oui: route.oui,
       net_id: route.net_id,
+      max_copies: route.max_copies,
       server: server,
       euis: euis,
       devaddr_ranges: devaddr_ranges
@@ -68,26 +72,32 @@ defmodule StartOver.Core.Route do
   end
 
   def from_web(json_params) do
-    json_params
-    |> Enum.reduce(%__MODULE__{}, fn
-      {"id", id}, acc ->
-        Map.put(acc, :id, id)
+    params =
+      json_params
+      |> Enum.reduce(%{}, fn
+        {"id", id}, acc ->
+          Map.put(acc, :id, id)
 
-      {"oui", id}, acc ->
-        Map.put(acc, :oui, oui_from_web(id))
+        {"oui", id}, acc ->
+          Map.put(acc, :oui, oui_from_web(id))
 
-      {"net_id", id}, acc ->
-        Map.put(acc, :net_id, net_id_from_web(id))
+        {"net_id", id}, acc ->
+          Map.put(acc, :net_id, net_id_from_web(id))
 
-      {"server", server}, acc ->
-        Map.put(acc, :server, RouteServer.from_web(server))
+        {"max_copies", max}, acc ->
+          Map.put(acc, :max_copies, max_copies_from_web(max))
 
-      {"euis", euis}, acc ->
-        Map.put(acc, :euis, euis_from_web(euis))
+        {"server", server}, acc ->
+          Map.put(acc, :server, RouteServer.from_web(server))
 
-      {"devaddr_ranges", ranges}, acc ->
-        Map.put(acc, :devaddr_ranges, devaddr_ranges_from_web(ranges))
-    end)
+        {"euis", euis}, acc ->
+          Map.put(acc, :euis, euis_from_web(euis))
+
+        {"devaddr_ranges", ranges}, acc ->
+          Map.put(acc, :devaddr_ranges, devaddr_ranges_from_web(ranges))
+      end)
+
+    struct!(__MODULE__, params)
   end
 
   def oui_from_web(id) when is_binary(id) do
@@ -95,6 +105,10 @@ defmodule StartOver.Core.Route do
   end
 
   def oui_from_web(id) when is_integer(id), do: id
+
+  def max_copies_from_web(max) when is_binary(max), do: String.to_integer(max, 10)
+
+  def max_copies_from_web(max) when is_integer(max), do: max
 
   def net_id_from_web(id) when is_binary(id) do
     String.to_integer(id, 16)

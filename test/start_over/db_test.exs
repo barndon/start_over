@@ -47,6 +47,7 @@ defmodule StartOver.DBTest do
       new_core_route = %Core.Route{
         oui: valid_org.oui,
         net_id: 11,
+        max_copies: 2,
         server: %Core.RouteServer{
           host: "newserver.testdomain.com",
           port: 4567,
@@ -77,6 +78,7 @@ defmodule StartOver.DBTest do
       new_core_route = %Core.Route{
         oui: 99,
         net_id: 11,
+        max_copies: 2,
         server: %Core.RouteServer{
           host: "newserver.testdomain.com",
           port: 4567,
@@ -114,6 +116,7 @@ defmodule StartOver.DBTest do
         id: valid_route_id,
         oui: valid_org.oui,
         net_id: 11,
+        max_copies: 2,
         server: %Core.RouteServer{
           host: "newserver.testdomain.com",
           port: 4567,
@@ -148,6 +151,7 @@ defmodule StartOver.DBTest do
         id: existing_db_route.id,
         oui: valid_org.oui,
         net_id: 11,
+        max_copies: 2,
         server: %Core.RouteServer{
           host: "newserver.testdomain.com",
           port: 4567,
@@ -183,6 +187,7 @@ defmodule StartOver.DBTest do
         id: existing_db_route.id,
         oui: 666,
         net_id: 11,
+        max_copies: 2,
         server: %Core.RouteServer{
           host: "newserver.testdomain.com",
           port: 4567,
@@ -216,6 +221,7 @@ defmodule StartOver.DBTest do
         id: non_existant_uuid,
         oui: valid_org.oui,
         net_id: 11,
+        max_copies: 2,
         server: %Core.RouteServer{
           host: "newserver.testdomain.com",
           port: 4567,

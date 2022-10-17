@@ -14,6 +14,7 @@ defmodule StartOver.Repo.Migrations.CreateRoutes do
       add :id, :uuid, primary_key: true, null: false
       add :oui, references(:organizations, column: :oui, on_delete: :delete_all)
       add :net_id, :bigint, null: false
+      add :max_copies, :bigint, null: false
 
       timestamps()
     end

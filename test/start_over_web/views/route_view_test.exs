@@ -23,6 +23,7 @@ defmodule StartOverWeb.Views.RouteViewTest do
           id: "11111111-2222-3333-4444-555555555555",
           oui: 1,
           net_id: "000007",
+          max_copies: 2,
           server: %{
             host: "server1.testdomain.com",
             port: 8888,

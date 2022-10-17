@@ -7,12 +7,14 @@ defmodule StartOver.Core.RouteTest do
   alias StartOver.Core.HttpRoamingOpts
   alias StartOver.Core.GwmpOpts
   alias StartOver.Core.PacketRouterOpts
+  alias StartOver.DB
 
   describe "Route.from_web/1" do
     test "can decode an HTTP Roaming Route from JSON params" do
       json_params = %{
         "net_id" => 7,
         "oui" => 1,
+        "max_copies" => 1,
         "server" => %{
           "host" => "server1.testdomain.com",
           "port" => 1000,
@@ -37,6 +39,7 @@ defmodule StartOver.Core.RouteTest do
       expected = %Route{
         oui: 1,
         net_id: 7,
+        max_copies: 1,
         server: %RouteServer{
           host: "server1.testdomain.com",
           port: 1000,
@@ -64,6 +67,24 @@ defmodule StartOver.Core.RouteTest do
       got = Route.oui_from_web("00FF")
 
       expected = 255
+
+      assert(got == expected)
+    end
+  end
+
+  describe "Route.max_copies_from_web/1" do
+    test "converts string arguments to integers, assuming base 10" do
+      got = Route.max_copies_from_web("15")
+
+      expected = 15
+
+      assert(got == expected)
+    end
+
+    test "accepts integer arguments as-is" do
+      got = Route.max_copies_from_web(15)
+
+      expected = 15
 
       assert(got == expected)
     end
@@ -127,12 +148,145 @@ defmodule StartOver.Core.RouteTest do
     end
   end
 
+  describe "Route.from_db/1" do
+    test "returns a correct Core.Route given a valid HTTP Roaming DB.Route" do
+      given =
+        %DB.Route{}
+        |> DB.Route.changeset(%{
+          oui: 1,
+          net_id: 0x123456,
+          max_copies: 2,
+          server: %{
+            host: "server1.testdomain.com",
+            port: 5555,
+            protocol_opts: %{
+              type: :http_roaming,
+              opts: %{
+                "dedupe_window" => 1800,
+                "auth_header" => "x-auth-header"
+              }
+            }
+          },
+          devaddr_ranges: [%{start_addr: 0x00000001, end_addr: 0x00000020}],
+          euis: [%{app_eui: 0x0000001_00000000, dev_eui: 0x00000002_00000000}]
+        })
+        |> Ecto.Changeset.apply_changes()
+
+      expected = %Route{
+        oui: 1,
+        net_id: 0x123456,
+        max_copies: 2,
+        server: %RouteServer{
+          host: "server1.testdomain.com",
+          port: 5555,
+          protocol_opts: %HttpRoamingOpts{
+            dedupe_window: 1800,
+            auth_header: "x-auth-header"
+          }
+        },
+        devaddr_ranges: [{0x00000001, 0x00000020}],
+        euis: [%{app_eui: 0x00000001_00000000, dev_eui: 0x00000002_00000000}]
+      }
+
+      got = Route.from_db(given)
+
+      assert(expected == got)
+    end
+
+    test "returns a correct Core.Route given a valid GWMP DB.Route" do
+      given =
+        %DB.Route{}
+        |> DB.Route.changeset(%{
+          oui: 1,
+          net_id: 0x123456,
+          max_copies: 2,
+          server: %{
+            host: "server1.testdomain.com",
+            port: 5555,
+            protocol_opts: %{
+              type: :gwmp,
+              opts: %{
+                "mapping" => [
+                  %{"region" => "US915", "port" => 4000},
+                  %{"region" => "EU868", "port" => 3000}
+                ]
+              }
+            }
+          },
+          devaddr_ranges: [%{start_addr: 0x00000001, end_addr: 0x00000020}],
+          euis: [%{app_eui: 0x0000001_00000000, dev_eui: 0x00000002_00000000}]
+        })
+        |> Ecto.Changeset.apply_changes()
+
+      expected = %Route{
+        oui: 1,
+        net_id: 0x123456,
+        max_copies: 2,
+        server: %RouteServer{
+          host: "server1.testdomain.com",
+          port: 5555,
+          protocol_opts: %GwmpOpts{
+            mapping: [
+              US915: 4000,
+              EU868: 3000
+            ]
+          }
+        },
+        devaddr_ranges: [{0x00000001, 0x00000020}],
+        euis: [%{app_eui: 0x00000001_00000000, dev_eui: 0x00000002_00000000}]
+      }
+
+      got = Route.from_db(given)
+
+      assert(expected == got)
+    end
+
+    test "returns a correct Core.Route given a valid Packet Route DB.Route" do
+      given =
+        %DB.Route{}
+        |> DB.Route.changeset(%{
+          oui: 1,
+          net_id: 0x123456,
+          max_copies: 2,
+          server: %{
+            host: "server1.testdomain.com",
+            port: 5555,
+            protocol_opts: %{
+              type: :packet_router,
+              opts: %{}
+            }
+          },
+          devaddr_ranges: [%{start_addr: 0x00000001, end_addr: 0x00000020}],
+          euis: [%{app_eui: 0x0000001_00000000, dev_eui: 0x00000002_00000000}]
+        })
+        |> Ecto.Changeset.apply_changes()
+
+      expected = %Route{
+        oui: 1,
+        net_id: 0x123456,
+        max_copies: 2,
+        server: %RouteServer{
+          host: "server1.testdomain.com",
+          port: 5555,
+          protocol_opts: %PacketRouterOpts{}
+        },
+        devaddr_ranges: [{0x00000001, 0x00000020}],
+        euis: [%{app_eui: 0x00000001_00000000, dev_eui: 0x00000002_00000000}]
+      }
+
+      got = Route.from_db(given)
+
+      assert(expected == got)
+    end
+  end
+
   describe "Route.from_proto/1" do
     test "can decode an HTTP Roaming RouteV1 protobuf" do
       bin =
         %{
           net_id: 7,
           oui: 1,
+          max_copies: 2,
           server: %{
             host: "server1.testdomain.com",
             port: 1000,
@@ -158,6 +312,7 @@ defmodule StartOver.Core.RouteTest do
       expected = %Route{
         oui: 1,
         net_id: 7,
+        max_copies: 2,
         server: %RouteServer{
           host: "server1.testdomain.com",
           port: 1000,
@@ -181,6 +336,7 @@ defmodule StartOver.Core.RouteTest do
         %{
           net_id: 7,
           oui: 1,
+          max_copies: 3,
           server: %{
             host: "server1.testdomain.com",
             port: 1000,
@@ -207,6 +363,7 @@ defmodule StartOver.Core.RouteTest do
       expected = %Route{
         oui: 1,
         net_id: 7,
+        max_copies: 3,
         server: %RouteServer{
           host: "server1.testdomain.com",
           port: 1000,
@@ -235,6 +392,7 @@ defmodule StartOver.Core.RouteTest do
         %{
           net_id: 7,
           oui: 1,
+          max_copies: 4,
           server: %{
             host: "server1.testdomain.com",
             port: 1000,
@@ -260,6 +418,7 @@ defmodule StartOver.Core.RouteTest do
       expected = %Route{
         oui: 1,
         net_id: 7,
+        max_copies: 4,
         server: %RouteServer{
           host: "server1.testdomain.com",
           port: 1000,

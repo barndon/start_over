@@ -28,6 +28,7 @@ defmodule StartOverWeb.OrganizationViewTest do
               }
             ],
             net_id: "000007",
+            max_copies: 2,
             oui: 1,
             server: %{
               host: "server1.testdomain.com",
@@ -52,6 +53,7 @@ defmodule StartOverWeb.OrganizationViewTest do
               }
             ],
             net_id: "000007",
+            max_copies: 2,
             oui: 1,
             server: %{
               host: "server1.testdomain.com",
@@ -90,6 +92,7 @@ defmodule StartOverWeb.OrganizationViewTest do
               }
             ],
             net_id: "000007",
+            max_copies: 2,
             oui: 1,
             server: %{
               host: "server1.testdomain.com",

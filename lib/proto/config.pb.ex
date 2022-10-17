@@ -75,6 +75,7 @@ defmodule Proto.Helium.Config.RouteV1 do
   field :euis, 3, repeated: true, type: Proto.Helium.Config.EuiV1
   field :oui, 4, type: :uint64
   field :server, 5, type: Proto.Helium.Config.ServerV1
+  field :max_copies, 6, type: :uint32, json_name: "maxCopies"
 end
 
 defmodule Proto.Helium.Config.RoutesReqV1 do
