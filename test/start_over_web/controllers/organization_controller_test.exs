@@ -11,16 +11,16 @@ defmodule StartOverWeb.OrganizationControllerTest do
   describe "index" do
     test "returns an empty list when no organizations exist", %{conn: conn} do
       conn = get(conn, Routes.organization_path(conn, :index))
-      assert json_response(conn, 200) == %{"organizations" => []}
+      assert json_response(conn, 200) == []
     end
 
     test "returns a list of organizations when organizations exist", %{conn: conn} do
-      valid_core_organization()
-      |> DB.create_organization!()
+      %DB.Organization{oui: expected_oui} =
+        valid_core_organization()
+        |> DB.create_organization!()
 
       conn = get(conn, Routes.organization_path(conn, :index))
-      assert %{"organizations" => orgs} = json_response(conn, 200)
-      assert 1 == length(orgs)
+      assert [%{"oui" => ^expected_oui}] = json_response(conn, 200)
     end
   end
 

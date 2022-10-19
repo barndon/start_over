@@ -28,7 +28,7 @@ defmodule StartOverGRPC.RouteView do
     }
   end
 
-  def protocol_params(%HttpRoamingOpts{}), do: {:http_roaming, %{}}
+  def protocol_params(%HttpRoamingOpts{}), do: {:http_roaming, %{dummy_value: true}}
 
   def protocol_params(%GwmpOpts{mapping: mapping}) do
     {:gwmp,
@@ -43,7 +43,7 @@ defmodule StartOverGRPC.RouteView do
      }}
   end
 
-  def protocol_params(%PacketRouterOpts{}), do: {:packet_router, %{}}
+  def protocol_params(%PacketRouterOpts{}), do: {:packet_router, %{dummy_value: true}}
 
   def eui_pair_params(%{app_eui: _app, dev_eui: _dev} = pair), do: pair
 

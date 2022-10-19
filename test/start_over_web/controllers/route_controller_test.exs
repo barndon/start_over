@@ -11,7 +11,7 @@ defmodule StartOverWeb.RouteControllerTest do
   describe "index" do
     test "returns an empty list when no routes exist", %{conn: conn} do
       conn = get(conn, Routes.route_path(conn, :index))
-      assert json_response(conn, 200) == %{"routes" => []}
+      assert json_response(conn, 200) == []
     end
 
     test "returns routes when routes exist", %{conn: conn} do
@@ -19,8 +19,7 @@ defmodule StartOverWeb.RouteControllerTest do
       DB.create_organization!(core_org)
 
       conn = get(conn, Routes.route_path(conn, :index))
-      assert %{"routes" => routes} = json_response(conn, 200)
-      assert length(routes) == length(core_org.routes)
+      assert [_one, _two, _three] = json_response(conn, 200)
     end
   end
 

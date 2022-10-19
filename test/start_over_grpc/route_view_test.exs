@@ -19,8 +19,10 @@ defmodule StartOverGRPC.RouteViewTest do
           host: "server1.testdomain.com",
           port: 8888,
 
-          # ProtocolHttpRoamingV1 doesn't support options in this verison.
-          protocol: {:http_roaming, %{}}
+          # ProtocolHttpRoamingV1 doesn't support options in this
+          # verison but Protobuf will encode it as null if it's empty,
+          # so we have to use a dummy value here.
+          protocol: {:http_roaming, %{dummy_value: true}}
         },
         euis: [
           %{app_eui: valid_app_eui_integer(), dev_eui: valid_dev_eui_integer()}
@@ -111,7 +113,11 @@ defmodule StartOverGRPC.RouteViewTest do
         server: %{
           host: "server1.testdomain.com",
           port: 8888,
-          protocol: {:packet_router, %{}}
+
+          # ProtocolPacketRouterV1 doesn't support options in this
+          # verison, but Protobuf will encode it null if it's empty,
+          # so we have to use a dummy value here.
+          protocol: {:packet_router, %{dummy_value: true}}
         },
         euis: [
           %{app_eui: valid_app_eui_integer(), dev_eui: valid_dev_eui_integer()}
