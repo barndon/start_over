@@ -19,7 +19,7 @@ defmodule StartOverWeb.OrganizationViewTest do
             id: "11111111-2222-3333-4444-555555555555",
             devaddr_ranges: [
               %{end_addr: "001F0000", start_addr: "00010000"},
-              %{end_addr: "FFFFFFFF", start_addr: "00300000"}
+              %{end_addr: "0030001A", start_addr: "00300000"}
             ],
             euis: [
               %{
@@ -27,7 +27,7 @@ defmodule StartOverWeb.OrganizationViewTest do
                 dev_eui: "FAAAAAAAAAAAAACE"
               }
             ],
-            net_id: "000007",
+            net_id: "000A80",
             max_copies: 2,
             server: %{
               host: "server1.testdomain.com",
@@ -43,7 +43,7 @@ defmodule StartOverWeb.OrganizationViewTest do
             id: "22222222-2222-3333-4444-555555555555",
             devaddr_ranges: [
               %{end_addr: "001F0000", start_addr: "00010000"},
-              %{end_addr: "FFFFFFFF", start_addr: "00300000"}
+              %{end_addr: "0030001A", start_addr: "00300000"}
             ],
             euis: [
               %{
@@ -51,7 +51,7 @@ defmodule StartOverWeb.OrganizationViewTest do
                 dev_eui: "FAAAAAAAAAAAAACE"
               }
             ],
-            net_id: "000007",
+            net_id: "000A80",
             max_copies: 2,
             server: %{
               host: "server1.testdomain.com",
@@ -81,7 +81,7 @@ defmodule StartOverWeb.OrganizationViewTest do
             id: "33333333-2222-3333-4444-555555555555",
             devaddr_ranges: [
               %{start_addr: "00010000", end_addr: "001F0000"},
-              %{start_addr: "00300000", end_addr: "FFFFFFFF"}
+              %{start_addr: "00300000", end_addr: "0030001A"}
             ],
             euis: [
               %{
@@ -89,7 +89,7 @@ defmodule StartOverWeb.OrganizationViewTest do
                 dev_eui: "FAAAAAAAAAAAAACE"
               }
             ],
-            net_id: "000007",
+            net_id: "000A80",
             max_copies: 2,
             server: %{
               host: "server1.testdomain.com",

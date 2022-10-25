@@ -13,7 +13,7 @@ defmodule StartOverGRPC.RouteViewTest do
 
       expected = %{
         oui: 1,
-        net_id: 7,
+        net_id: 2688,
         max_copies: 2,
         server: %{
           host: "server1.testdomain.com",
@@ -29,7 +29,7 @@ defmodule StartOverGRPC.RouteViewTest do
         ],
         devaddr_ranges: [
           %{start_addr: 0x0001_0000, end_addr: 0x001F_0000},
-          %{start_addr: 0x0030_0000, end_addr: 0xFFFF_FFFF}
+          %{start_addr: 0x0030_0000, end_addr: 0x0030_001A}
         ]
       }
 
@@ -53,7 +53,7 @@ defmodule StartOverGRPC.RouteViewTest do
 
       expected = %{
         oui: 1,
-        net_id: 7,
+        net_id: 2688,
         max_copies: 2,
         server: %{
           host: "server1.testdomain.com",
@@ -84,7 +84,7 @@ defmodule StartOverGRPC.RouteViewTest do
         ],
         devaddr_ranges: [
           %{start_addr: 0x0001_0000, end_addr: 0x001F_0000},
-          %{start_addr: 0x0030_0000, end_addr: 0xFFFF_FFFF}
+          %{start_addr: 0x0030_0000, end_addr: 0x0030_001A}
         ]
       }
 
@@ -108,7 +108,7 @@ defmodule StartOverGRPC.RouteViewTest do
 
       expected = %{
         oui: 1,
-        net_id: 7,
+        net_id: 2688,
         max_copies: 2,
         server: %{
           host: "server1.testdomain.com",
@@ -124,7 +124,7 @@ defmodule StartOverGRPC.RouteViewTest do
         ],
         devaddr_ranges: [
           %{start_addr: 0x0001_0000, end_addr: 0x001F_0000},
-          %{start_addr: 0x0030_0000, end_addr: 0xFFFF_FFFF}
+          %{start_addr: 0x0030_0000, end_addr: 0x0030_001A}
         ]
       }
 

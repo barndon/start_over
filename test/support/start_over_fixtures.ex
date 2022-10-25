@@ -9,6 +9,21 @@ defmodule StartOver.Fixtures do
     0xFAAAAAAA_AAAAAACE
   end
 
+  def valid_devaddr(nwk_id, nwk_addr) do
+    <<int::integer-unsigned-size(32)>> =
+      :devaddr_6x25
+      |> Core.Devaddr.new(nwk_id, nwk_addr)
+      |> Core.Devaddr.to_binary()
+
+    int
+  end
+
+  def valid_net_id(rfu, nwk_id) do
+    :net_id_sponsor
+    |> Core.NetID.new(rfu, nwk_id)
+    |> Core.NetID.to_integer()
+  end
+
   def valid_core_organization do
     %Core.Organization{
       oui: 1,
@@ -26,7 +41,7 @@ defmodule StartOver.Fixtures do
     %Core.Route{
       id: nil,
       oui: 1,
-      net_id: 7,
+      net_id: valid_net_id(42, 0),
       max_copies: 2,
       server: %Core.RouteServer{
         host: "server1.testdomain.com",
@@ -40,8 +55,8 @@ defmodule StartOver.Fixtures do
         %{app_eui: valid_app_eui_integer(), dev_eui: valid_dev_eui_integer()}
       ],
       devaddr_ranges: [
-        {0x0001_0000, 0x001F_0000},
-        {0x0030_0000, 0xFFFF_FFFF}
+        {valid_devaddr(0, 65536), valid_devaddr(0, 2_031_616)},
+        {valid_devaddr(0, 3_145_728), valid_devaddr(0, 3_145_754)}
       ]
     }
   end

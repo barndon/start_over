@@ -14,6 +14,7 @@ defmodule StartOverWeb.OrganizationController do
     org =
       params
       |> Core.Organization.from_web()
+      |> Core.OrganizationValidator.validate!()
       |> StartOver.create_organization()
 
     conn

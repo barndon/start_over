@@ -23,6 +23,13 @@ defmodule StartOverWeb.Router do
   end
 
   @impl Plug.ErrorHandler
+  def handle_errors(conn, %{
+        kind: :error,
+        reason: %StartOver.Core.InvalidDataError{message: message}
+      }) do
+    send_resp(conn, 400, Jason.encode!(%{error: message}))
+  end
+
   def handle_errors(conn, %{kind: :error, reason: %Ecto.NoResultsError{}}) do
     send_resp(conn, 404, "")
   end

@@ -48,6 +48,26 @@ defmodule StartOverWeb.OrganizationControllerTest do
         post(conn, Routes.organization_path(conn, :create), valid_json)
       end
     end
+
+    test "returns 400 given invalid inputs", %{conn: conn} do
+      bad_org =
+        valid_core_organization()
+        |> Map.put(:oui, -1)
+
+      bad_json = OrganizationView.organization_json(bad_org)
+
+      {400, _headers, body} =
+        assert_error_sent 400, fn ->
+          post(conn, Routes.organization_path(conn, :create), bad_json)
+        end
+
+      assert(
+        body ==
+          Jason.encode!(%{
+            error: "invalid organization: [oui: \"oui must be a positive unsigned integer\"]"
+          })
+      )
+    end
   end
 
   describe "update organization" do

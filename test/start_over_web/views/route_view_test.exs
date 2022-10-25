@@ -21,7 +21,7 @@ defmodule StartOverWeb.Views.RouteViewTest do
       %{
         id: "11111111-2222-3333-4444-555555555555",
         oui: 1,
-        net_id: "000007",
+        net_id: "000A80",
         max_copies: 2,
         server: %{
           host: "server1.testdomain.com",
@@ -40,7 +40,7 @@ defmodule StartOverWeb.Views.RouteViewTest do
         ],
         devaddr_ranges: [
           %{start_addr: "00010000", end_addr: "001F0000"},
-          %{start_addr: "00300000", end_addr: "FFFFFFFF"}
+          %{start_addr: "00300000", end_addr: "0030001A"}
         ]
       }
     ]
@@ -56,7 +56,7 @@ defmodule StartOverWeb.Views.RouteViewTest do
 
     expected = %{
       id: "11111111-2222-3333-4444-555555555555",
-      net_id: "000007",
+      net_id: "000A80",
       max_copies: 2,
       server: %{
         host: "server1.testdomain.com",
@@ -75,7 +75,7 @@ defmodule StartOverWeb.Views.RouteViewTest do
       ],
       devaddr_ranges: [
         %{start_addr: "00010000", end_addr: "001F0000"},
-        %{start_addr: "00300000", end_addr: "FFFFFFFF"}
+        %{start_addr: "00300000", end_addr: "0030001A"}
       ]
     }
 

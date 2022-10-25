@@ -27,6 +27,7 @@ curl -v \
         }
       ],
       "net_id": "000007",
+      "max_copies": 3,
       "oui": 1,
       "server": {
         "host": "server1.testdomain.com",
@@ -56,6 +57,7 @@ curl -v \
         }
       ],
       "net_id": "000007",
+      "max_copies": 3,
       "oui": 1,
       "server": {
         "host": "server1.testdomain.com",
@@ -141,6 +143,7 @@ curl -v \
         }
       ],
       "net_id": "000007",
+      "max_copies": 3,
       "oui": 1,
       "server": {
         "host": "server1.testdomain.com",

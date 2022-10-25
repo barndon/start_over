@@ -79,7 +79,8 @@ defmodule StartOver.MixProject do
        git: "https://github.com/helium/proto.git",
        branch: "master",
        compile: router_config_proto_compile(),
-       app: false}
+       app: false},
+      {:libp2p_crypto, git: "https://github.com/helium/libp2p-crypto.git"}
     ]
   end
 
